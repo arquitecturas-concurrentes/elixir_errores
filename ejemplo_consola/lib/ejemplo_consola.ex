@@ -17,17 +17,17 @@ iex(2)> raise FuckedModule, message: "something happened"
 
 
 try do
-  raise 'some unexpected error'
+  raise "some unexpected error"
   IO.puts "Not going to be executed."
 rescue
-  ArgumentError -> :error
+  RuntimeError -> :error
 end
 
 iex(1)> try do
 ...(1)>   raise 'some unexpected error'
 ...(1)>   IO.puts "Not going to be executed."
 ...(1)> rescue
-...(1)>   ArgumentError -> :error
+...(1)>   RuntimeError -> :error
 ...(1)> end
 ** (CaseClauseError) no case clause matching: 'some unexpected error'
 
@@ -40,9 +40,10 @@ iex(3)> File.read "bleh"
 {:ok, "saraza"}
 
 
-File.read "bleh" do
-  case {:ok, content}   -> IO.puts "Content read: #{content}"
-  case {:error, reason} -> IO.puts "Error, reason: #{reason}"
+r = File.read("bleh")
+case r do
+  {:ok, content}   -> IO.puts "Content read: #{content}"
+  {:error, reason} -> IO.puts "Error, reason: #{reason}"
 end
 
 iex(8)> spawn_link fn -> exit(1) end
@@ -69,7 +70,7 @@ brokenfn = fn -> :timer.sleep(5000); exit(1) end
 spawn brokenfn
 spawn_link brokenfn
 
-iex(1)> brokenfn = fn -> :timer.sleep(5000); exit("I Failed") end
+iex(1)> brokenfn = fn -> :timer.sleep(5000); exit("Falle") end
 #Function<20.90072148/0 in :erl_eval.expr/5>
 iex(2)> spawn_link brokenfn
 #PID<0.91.0>
